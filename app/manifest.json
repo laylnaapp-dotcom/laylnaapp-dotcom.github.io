@@ -1,0 +1,13 @@
+{
+  "name": "ليلنا",
+  "short_name": "ليلنا",
+  "description": "ليلنا مش لوحدك",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "background_color": "#091540",
+  "theme_color": "#091540",
+  "icons": [{ "src": "/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}
