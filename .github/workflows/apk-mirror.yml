@@ -1,0 +1,45 @@
+name: APK mirror
+
+# بينقل ملفات تثبيت ليلنا (APK) من مخزن Supabase لصفحة الإصدارات هنا على GitHub (تحميل مجاني ومن غير حد).
+# لينك ثابت لأحدث نسخة: https://laylna.com/download/
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "e.g. v1.0.0-110"
+        required: true
+      arm64:
+        description: "arm64-v8a APK URL"
+        required: true
+      v7a:
+        description: "armeabi-v7a APK URL"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag }}
+      A64: ${{ inputs.arm64 }}
+      V7: ${{ inputs.v7a }}
+    steps:
+      - name: Download
+        run: |
+          mkdir out
+          curl -fsSL -o out/laylna-arm64-v8a.apk "$A64"
+          curl -fsSL -o out/laylna-armeabi-v7a.apk "$V7"
+          # لازم يبقى APK حقيقي (ملف zip) مش صفحة غلط
+          for f in out/*.apk; do head -c 2 "$f" | grep -q PK || { echo "::error::$f is not an APK"; exit 1; }; done
+          ls -l out
+          (cd out && sha256sum *.apk > SHA256SUMS.txt && cat SHA256SUMS.txt)
+      - name: Publish release
+        run: |
+          gh release delete "$TAG" -R "$GITHUB_REPOSITORY" -y --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" -R "$GITHUB_REPOSITORY" --latest --title "ليلنا $TAG" \
+            --notes "نسخة ليلنا للأندرويد. أغلب الموبايلات: laylna-arm64-v8a.apk — الموبايلات القديمة: laylna-armeabi-v7a.apk" \
+            out/laylna-arm64-v8a.apk out/laylna-armeabi-v7a.apk out/SHA256SUMS.txt
+          echo "LATEST https://github.com/$GITHUB_REPOSITORY/releases/latest/download/laylna-arm64-v8a.apk"
