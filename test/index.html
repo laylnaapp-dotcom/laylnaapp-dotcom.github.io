@@ -33,8 +33,21 @@ h1{margin:8px 0 6px;font-size:30px;color:#fff}
   <p class="small">بنفس حساب جوجل اللي على موبايلك، مرة واحدة بس.</p>
   <a class="btn big" href="https://groups.google.com/g/laylna-testers"><span class="n">١</span>ادخل الجروب</a>
   <a class="btn big" href="https://play.google.com/apps/testing/com.laylna.app"><span class="n">٢</span>فعّل الاختبار</a>
-  <a class="btn ghost" href="https://play.google.com/store/apps/details?id=com.laylna.app"><span class="n">٣</span>نزّل ليلنا من جوجل بلاي</a>
+  <a class="btn ghost" id="get" href="https://play.google.com/store/apps/details?id=com.laylna.app"><span class="n">٣</span>نزّل ليلنا من جوجل بلاي</a>
+  <p class="small" id="inv" hidden></p>
   <p class="small">بعد كده أي تحديث بيجيلك من جوجل بلاي على طول.</p>
 </main>
+<script>
+// لينك دعوة (?c=LAYLNA-123): الكود بيتحفظ لحد ما يرجع من الجروب، وزرار التنزيل بيبعته لجوجل بلاي فالدعوة بتتحسب لصاحبه
+(function () {
+  var rx = /^LAYLNA-[0-9]{1,12}$/, c = (new URLSearchParams(location.search).get('c') || '').toUpperCase();
+  try { if (rx.test(c)) localStorage.setItem('laylna.inv', c); else c = localStorage.getItem('laylna.inv') || ''; } catch (e) {}
+  if (!rx.test(c)) return;
+  document.getElementById('get').href = 'https://play.google.com/store/apps/details?id=com.laylna.app&referrer=' + encodeURIComponent('inv=' + c);
+  var n = document.getElementById('inv');
+  n.textContent = 'جاي بدعوة من صاحبك، ونزّله من الزرار ٣ عشان الدعوة تتحسبله.';
+  n.hidden = false;
+})();
+</script>
 </body>
 </html>
